@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Played Games</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+  }
+  h1 {
+    text-align: center;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+  }
+  .game-card {
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    word-break: break-word;
+  }
+</style>
+</head>
+<body>
+
+<h1>Games You've Played</h1>
+<div class="grid" id="gamesGrid"></div>
+
+<script>
+  // Get the games from localStorage
+  const games = JSON.parse(localStorage.getItem('playedGames') || '[]');
+
+  const grid = document.getElementById('gamesGrid');
+
+  // Create a card for each game
+  games.forEach(game => {
+    const card = document.createElement('div');
+    card.className = 'game-card';
+    card.textContent = game;
+    grid.appendChild(card);
+  });
+
+  // Optional: If no games played yet
+  if (games.length === 0) {
+    const empty = document.createElement('div');
+    empty.textContent = "You haven't played any games yet!";
+    empty.style.gridColumn = '1 / -1';
+    empty.style.textAlign = 'center';
+    grid.appendChild(empty);
+  }
+</script>
+
+</body>
+</html>
