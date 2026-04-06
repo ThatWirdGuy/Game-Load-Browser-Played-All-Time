@@ -66,13 +66,17 @@
     games.forEach(game => {
       const card = document.createElement('div');
       card.className = 'game-card';
+
       const img = document.createElement('img');
-      img.src = game.icon || '';
-      img.alt = game.name || '';
+      img.src = game.icon ? decodeURIComponent(game.icon) : 'https://via.placeholder.com/100';
+      img.alt = game.name || 'Game';
+      img.onerror = () => { img.src = 'https://via.placeholder.com/100'; };
       card.appendChild(img);
+
       const name = document.createElement('div');
       name.textContent = game.name || '';
       card.appendChild(name);
+
       grid.appendChild(card);
     });
 
