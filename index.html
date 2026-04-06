@@ -24,6 +24,7 @@
   
   const Url = window.location.pathname.split('/').filter(Boolean)[0]
   const GameName = decodeURIComponent(pathParts[1] || appName);
+  const GameIcon = pathParts[2];
   
   document.getElementById('What').src = Url;
 
