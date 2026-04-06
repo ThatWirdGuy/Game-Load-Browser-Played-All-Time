@@ -25,6 +25,7 @@
     text-align: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     word-break: break-word;
+    cursor: pointer;
   }
   .game-card img {
     width: 100px;
@@ -50,12 +51,11 @@
 </style>
 </head>
 <body>
-
 <h1>Games You've Played</h1>
 <button id="clearButton">Clear Played Games</button>
 <div class="grid" id="gamesGrid"></div>
-
 <script>
+  const FALLBACK = 'https://cdn.jsdelivr.net/gh/ThatWirdGuy/Game-Icons@main/Missing.png';
   const grid = document.getElementById('gamesGrid');
   const clearButton = document.getElementById('clearButton');
 
@@ -68,10 +68,17 @@
       card.className = 'game-card';
 
       const img = document.createElement('img');
-      // encode spaces in URLs
-      img.src = game.icon ? encodeURI(game.icon) : 'https://cdn.jsdelivr.net/gh/ThatWirdGuy/Game-Icons@main/Missing.png';
+
+      // Use icon URL directly — do NOT encodeURI (it's already a valid URL from jsDelivr)
+      img.src = (game.icon && game.icon.trim() !== '') ? game.icon : FALLBACK;
       img.alt = game.name || 'Game';
-      img.onerror = () => { img.src = 'https://cdn.jsdelivr.net/gh/ThatWirdGuy/Game-Icons@main/Missing.png'; };
+
+      // Guard against infinite onerror loop if fallback itself fails
+      img.onerror = () => {
+        img.onerror = null;
+        img.src = FALLBACK;
+      };
+
       card.appendChild(img);
 
       const name = document.createElement('div');
@@ -97,6 +104,5 @@
 
   loadGames();
 </script>
-
 </body>
 </html>
