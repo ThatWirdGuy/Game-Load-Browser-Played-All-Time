@@ -5,128 +5,95 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Played Games</title>
 <style>
-  body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
-    background-color: #ffffff;
-  }
-  h1 {
-    text-align: center;
-  }
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
-    margin-top: 20px;
-  }
-  .game-card {
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-radius: 10px;
-    text-align: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    word-break: break-word;
-    cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-  }
-  .game-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  }
-  .game-card img {
-    width: 100px;
-    height: 100px;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 10px;
-    background-color: #ddd;
-  }
-  #clearButton {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    font-size: 16px;
-    border: none;
-    border-radius: 8px;
-    background-color: #ff4d4d;
-    color: white;
-    cursor: pointer;
-  }
-  #clearButton:hover {
-    background-color: #e60000;
-  }
+  body { font-family: Arial, sans-serif; margin: 20px; background-color: #ffffff; }
+  h1 { text-align: center; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; margin-top: 20px; }
+  .game-card { padding: 10px; background-color: #f0f0f0; border-radius: 10px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); cursor: pointer; transition: transform 0.15s; }
+  .game-card:hover { transform: scale(1.05); }
+  .game-card img { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; margin-bottom: 10px; background-color: #ddd; }
+  .controls { text-align: center; margin-bottom: 20px; }
+  button { padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer; margin: 5px; font-weight: bold; }
+  #clearButton { background-color: #ff4d4d; color: white; }
+  #addButton { background-color: #4CAF50; color: white; }
 </style>
 </head>
 <body>
 
 <h1>Games You've Played</h1>
-<button id="clearButton">Clear Played Games</button>
+
+<div class="controls">
+  <button id="addButton">Add Game Manually</button>
+  <button id="clearButton">Clear History</button>
+</div>
+
 <div class="grid" id="gamesGrid"></div>
 
 <script>
   const FALLBACK = 'https://cdn.jsdelivr.net/gh/ThatWirdGuy/Game-Icons@main/Missing.png';
   const grid = document.getElementById('gamesGrid');
-  const clearButton = document.getElementById('clearButton');
 
   function loadGames() {
     grid.innerHTML = '';
-    const rawData = localStorage.getItem('playedGames');
-    const games = JSON.parse(rawData || '[]');
+    const games = JSON.parse(localStorage.getItem('playedGames') || '[]');
 
     if (games.length === 0) {
-      const empty = document.createElement('div');
-      empty.textContent = "You haven't played any games yet!";
-      empty.style.gridColumn = '1 / -1';
-      empty.style.textAlign = 'center';
-      grid.appendChild(empty);
+      grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center;">You haven\'t added any games yet.</div>';
       return;
     }
 
     games.forEach(game => {
-      if (!game.name && !game.url) return;
-
       const card = document.createElement('div');
       card.className = 'game-card';
-
+      
       const img = document.createElement('img');
-      img.src = (game.icon && game.icon.trim() !== '') ? game.icon : FALLBACK;
-      img.alt = game.name || 'Game';
-      img.onerror = () => {
-        img.onerror = null;
-        img.src = FALLBACK;
-      };
-
-      if (game.url) {
-        card.addEventListener('click', () => {
-          const win = window.open('about:blank', '_blank');
-          if (win) {
-            win.document.title = game.name || "Game";
-            win.document.body.style.margin = '0';
-            win.document.body.style.height = '100vh';
-            win.document.body.style.overflow = 'hidden';
-            const iframe = win.document.createElement('iframe');
-            iframe.style.border = 'none';
-            iframe.style.width = '100%';
-            iframe.style.height = '100%';
-            iframe.style.margin = '0';
-            iframe.src = game.url;
-            win.document.body.appendChild(iframe);
-          } else {
-            alert('Pop-up blocked! Please allow pop-ups to launch the game.');
-          }
-        });
+      // Convert GitHub blob links to Raw links automatically
+      let iconUrl = game.icon || FALLBACK;
+      if(iconUrl.includes('github.com') && iconUrl.includes('/blob/')) {
+        iconUrl = iconUrl.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
       }
+      
+      img.src = iconUrl;
+      img.onerror = () => img.src = FALLBACK;
+
+      card.addEventListener('click', () => {
+        const win = window.open('about:blank', '_blank');
+        if (win) {
+          win.document.body.style.margin = '0';
+          win.document.body.style.height = '100vh';
+          win.document.body.style.overflow = 'hidden';
+          const iframe = win.document.createElement('iframe');
+          iframe.style.width = '100%';
+          iframe.style.height = '100%';
+          iframe.style.border = 'none';
+          iframe.src = game.url;
+          win.document.body.appendChild(iframe);
+        }
+      });
 
       card.appendChild(img);
-      const name = document.createElement('div');
-      name.textContent = game.name || 'Untitled Game';
-      card.appendChild(name);
+      const title = document.createElement('div');
+      title.textContent = game.name || 'Untitled Game';
+      card.appendChild(title);
       grid.appendChild(card);
     });
   }
 
-  clearButton.addEventListener('click', () => {
-    if (confirm("Clear your play history?")) {
+  // Manually add a game since Inspect is blocked
+  document.getElementById('addButton').addEventListener('click', () => {
+    const name = prompt("Enter Game Name:");
+    const url = prompt("Enter Game URL (the link to the game):");
+    const icon = prompt("Enter Icon URL (optional):");
+
+    if (name && url) {
+      let games = JSON.parse(localStorage.getItem('playedGames') || '[]');
+      games.push({ name, url, icon });
+      localStorage.setItem('playedGames', JSON.stringify(games));
+      loadGames();
+    }
+  });
+
+  document.getElementById('clearButton').addEventListener('click', () => {
+    if(confirm("Clear everything?")) {
       localStorage.removeItem('playedGames');
       loadGames();
     }
