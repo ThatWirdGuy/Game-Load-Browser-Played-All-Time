@@ -61,7 +61,6 @@
 
 <h1>Games You've Played</h1>
 <button id="clearButton">Clear Played Games</button>
-
 <div class="grid" id="gamesGrid"></div>
 
 <script>
@@ -71,33 +70,32 @@
 
   function loadGames() {
     grid.innerHTML = '';
-    const games = JSON.parse(localStorage.getItem('playedGames') || '[]');
+    const rawData = localStorage.getItem('playedGames');
+    const games = JSON.parse(rawData || '[]');
 
     if (games.length === 0) {
       const empty = document.createElement('div');
       empty.textContent = "You haven't played any games yet!";
       empty.style.gridColumn = '1 / -1';
       empty.style.textAlign = 'center';
-      empty.style.marginTop = '20px';
       grid.appendChild(empty);
       return;
     }
 
     games.forEach(game => {
+      if (!game.name && !game.url) return;
+
       const card = document.createElement('div');
       card.className = 'game-card';
 
-      // Image Handling
       const img = document.createElement('img');
       img.src = (game.icon && game.icon.trim() !== '') ? game.icon : FALLBACK;
       img.alt = game.name || 'Game';
-
       img.onerror = () => {
         img.onerror = null;
         img.src = FALLBACK;
       };
 
-      // Handle Game Launching (about:blank Cloaking)
       if (game.url) {
         card.addEventListener('click', () => {
           const win = window.open('about:blank', '_blank');
@@ -106,14 +104,12 @@
             win.document.body.style.margin = '0';
             win.document.body.style.height = '100vh';
             win.document.body.style.overflow = 'hidden';
-            
             const iframe = win.document.createElement('iframe');
             iframe.style.border = 'none';
             iframe.style.width = '100%';
             iframe.style.height = '100%';
             iframe.style.margin = '0';
             iframe.src = game.url;
-            
             win.document.body.appendChild(iframe);
           } else {
             alert('Pop-up blocked! Please allow pop-ups to launch the game.');
@@ -122,25 +118,21 @@
       }
 
       card.appendChild(img);
-
       const name = document.createElement('div');
-      name.textContent = game.name || 'Unknown Game';
+      name.textContent = game.name || 'Untitled Game';
       card.appendChild(name);
-
       grid.appendChild(card);
     });
   }
 
   clearButton.addEventListener('click', () => {
-    if (confirm("Are you sure you want to clear your play history?")) {
+    if (confirm("Clear your play history?")) {
       localStorage.removeItem('playedGames');
       loadGames();
     }
   });
 
-  // Initial Load
   loadGames();
 </script>
-
 </body>
 </html>
