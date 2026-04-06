@@ -23,7 +23,7 @@
   const pathParts = window.location.pathname.split('/').filter(Boolean);
   
   const Url = window.location.pathname.split('/').filter(Boolean)[0]
-  const GameName = pathParts[1]
+  const GameName = decodeURIComponent(pathParts[1] || appName);
   
   document.getElementById('What').src = Url;
 
