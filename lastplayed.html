@@ -19,12 +19,19 @@
     margin-top: 20px;
   }
   .game-card {
-    padding: 20px;
+    padding: 10px;
     background-color: #f0f0f0;
     border-radius: 10px;
     text-align: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     word-break: break-word;
+  }
+  .game-card img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
   }
 </style>
 </head>
@@ -34,20 +41,27 @@
 <div class="grid" id="gamesGrid"></div>
 
 <script>
-  // Get the games from localStorage
   const games = JSON.parse(localStorage.getItem('playedGames') || '[]');
-
   const grid = document.getElementById('gamesGrid');
 
-  // Create a card for each game
   games.forEach(game => {
     const card = document.createElement('div');
     card.className = 'game-card';
-    card.textContent = game;
+
+    if (game.icon) {
+      const img = document.createElement('img');
+      img.src = game.icon;
+      img.alt = game.name;
+      card.appendChild(img);
+    }
+
+    const name = document.createElement('div');
+    name.textContent = game.name;
+    card.appendChild(name);
+
     grid.appendChild(card);
   });
 
-  // Optional: If no games played yet
   if (games.length === 0) {
     const empty = document.createElement('div');
     empty.textContent = "You haven't played any games yet!";
