@@ -69,9 +69,9 @@
 
       const img = document.createElement('img');
       // encode spaces in URLs
-      img.src = game.icon ? encodeURI(game.icon) : 'https://via.placeholder.com/100';
+      img.src = game.icon ? encodeURI(game.icon) : 'https://cdn.jsdelivr.net/gh/ThatWirdGuy/Game-Icons@main/Missing.png';
       img.alt = game.name || 'Game';
-      img.onerror = () => { img.src = 'https://via.placeholder.com/100'; };
+      img.onerror = () => { img.src = 'https://cdn.jsdelivr.net/gh/ThatWirdGuy/Game-Icons@main/Missing.png'; };
       card.appendChild(img);
 
       const name = document.createElement('div');
