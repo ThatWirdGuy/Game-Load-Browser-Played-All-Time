@@ -8,7 +8,7 @@
   body { font-family: sans-serif; margin: 20px; background-color: #fff; }
   .controls { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
   button { padding: 10px; cursor: pointer; border-radius: 5px; border: 1px solid #ccc; }
-  #addButton { background: #28a745; color: white; border: none; }
+  /* Removed addButton style */
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
   .game-card { border: 1px solid #ddd; padding: 10px; border-radius: 10px; text-align: center; cursor: pointer; }
   .game-card img { width: 100px; height: 100px; object-fit: cover; border-radius: 5px; }
@@ -20,7 +20,6 @@
 <h1>Played Games</h1>
 
 <div class="controls">
-  <button id="addButton">Add Game</button>
   <button id="clearButton">Clear All</button>
 </div>
 
@@ -54,7 +53,6 @@
         const card = document.createElement('div');
         card.className = 'game-card';
         
-        // Auto-fix GitHub links
         let icon = game.icon || FALLBACK;
         if(icon.includes('github.com/blob')) icon = icon.replace('github.com', 'raw.githubusercontent.com').replace('/blob/', '/');
 
@@ -73,29 +71,17 @@
         grid.appendChild(card);
       });
     } catch (e) {
-      updateLog("ERROR: LocalStorage might be blocked by your browser/school.");
+      updateLog("ERROR: LocalStorage might be blocked.");
     }
   }
 
-  document.getElementById('addButton').onclick = () => {
-    const name = prompt("Name:");
-    const url = prompt("URL:");
-    const icon = prompt("Icon URL (optional):");
-
-    if (name && url) {
-      const games = JSON.parse(localStorage.getItem('playedGames') || '[]');
-      games.push({ name, url, icon });
-      localStorage.setItem('playedGames', JSON.stringify(games));
-      loadGames();
-    }
-  };
+  // Add Game Click Handler Removed
 
   document.getElementById('clearButton').onclick = () => {
     localStorage.removeItem('playedGames');
     loadGames();
   };
 
-  // Run on start
   loadGames();
 </script>
 </body>
