@@ -1,106 +1,54 @@
-<style>
-  iframe{
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Loading...</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="gameFrame"></iframe>
+  <script>
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
 
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-</style>
+    const Url          = pathParts[0] || "fallback-game-domain"; // Vercel subdomain
+    const GameName     = decodeURIComponent(pathParts[1] || "Unknown Game");
+    const GameIconPath = decodeURIComponent(pathParts[2] || "");
 
-<iframe id="What"></iframe>
+    // Convert GitHub blob path → jsDelivr CDN URL
+    let GameIcon = "";
+    if (GameIconPath) {
+      GameIcon = "https://cdn.jsdelivr.net/gh/" + GameIconPath.replace("/blob/", "/");
+    }
 
-<script>
-  const pathParts = window.location.pathname.split('/').filter(Boolean);
+    // Load game
+    document.getElementById('gameFrame').src = "https://" + Url + ".vercel.app";
+    document.title = GameName;
 
-  const Url = pathParts[0];
-  const GameName = decodeURIComponent(pathParts[1] || "Unknown Game");
-  const GameIcon = decodeURIComponent(pathParts[2] || "");
-
-<style>
-  iframe{
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-  }
-
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-</style>
-
-<iframe id="What"></iframe>
-
-<script>
-  const pathParts = window.location.pathname.split('/').filter(Boolean);
-
-  const Url = pathParts[0]; // game repo/domain
-  const GameName = decodeURIComponent(pathParts[1] || "Unknown Game");
-  const GameIconPath = pathParts[2] || ""; // e.g., ThatWirdGuy/Game-Icons/blob/main/ZombsIo.png
-
-  // Convert GitHub URL path to jsDelivr CDN URL
-  let GameIcon = "";
-  if (GameIconPath) {
-    // replace 'blob/' with '' for jsDelivr
-<style>
-  iframe{
-    width: 100%;
-    height: 100%;
-    border: none;
-    display: block;
-  }
-
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-  }
-</style>
-
-<iframe id="What"></iframe>
-
-<script>
-  const pathParts = window.location.pathname.split('/').filter(Boolean);
-
-  const Url = pathParts[0] || "fallback-game-domain"; // e.g., your Vercel subdomain
-  const GameName = decodeURIComponent(pathParts[1] || "Unknown Game");
-  const GameIconPath = decodeURIComponent(pathParts[2] || "");
-
-  // Convert GitHub blob path to jsDelivr URL
-  let GameIcon = "";
-  if (GameIconPath) {
-    GameIcon = "https://cdn.jsdelivr.net/gh/" + GameIconPath.replace("/blob/", "/");
-  }
-
-  // Load the game in iframe
-  document.getElementById('What').src = "https://" + Url + ".vercel.app";
-
-  document.title = GameName;
-
-  // Save played games in localStorage
-  let playedGames = JSON.parse(localStorage.getItem('playedGames') || '[]');
-  const existingIndex = playedGames.findIndex(g => g.name === GameName);
-
-  if (existingIndex !== -1) {
-    playedGames[existingIndex] = { name: GameName, icon: GameIcon };
-  } else {
-    playedGames.push({ name: GameName, icon: GameIcon });
-  }
-
-  localStorage.setItem('playedGames', JSON.stringify(playedGames));
-  console.log("Games you've played:", playedGames);
-</script>
+    // Save to localStorage
+    let playedGames = JSON.parse(localStorage.getItem('playedGames') || '[]');
+    const existingIndex = playedGames.findIndex(g => g.name === GameName);
+    if (existingIndex !== -1) {
+      playedGames[existingIndex] = { name: GameName, icon: GameIcon };
+    } else {
+      playedGames.push({ name: GameName, icon: GameIcon });
+    }
+    localStorage.setItem('playedGames', JSON.stringify(playedGames));
+    console.log("Games you've played:", playedGames);
+  </script>
+</body>
+</html>
