@@ -23,54 +23,26 @@
 </head>
 <body>
   <iframe id="gameFrame"></iframe>
-  <script>
-    const pathParts = window.location.pathname.split('/').filter(Boolean);
+<script>
+  const pathParts = window.location.pathname.split('/').filter(Boolean);
 
-    // 1. Parse Data from URL
-    const subdomain = pathParts[0] || ""; 
-    const GameName = decodeURIComponent(pathParts[1] || "Unknown Game");
-    const GameIconPath = decodeURIComponent(pathParts.slice(2).join('/') || "");
+  const hasUrlMarker = pathParts[pathParts.length - 1] === "url";
 
-    // 2. Construct Real URLs
-    const finalGameUrl = "https://" + subdomain + ".vercel.app";
+  let subdomain = "";
+  let GameName = "Unknown Game";
+
+  if (hasUrlMarker) {
     
-    let GameIcon = "https://cdn.jsdelivr.net/gh/ThatWirdGuy/Game-Icons@main/Missing.png";
-    if (GameIconPath) {
-      // Fixes the blob to @ format for jsDelivr
-      GameIcon = "https://cdn.jsdelivr.net/gh/" + GameIconPath.replace("/blob/", "@");
-    }
+    subdomain = pathParts[pathParts.length - 2] || ""; 
+    GameName = decodeURIComponent(pathParts[0] || "Unknown Game");
+  } else {
+    subdomain = pathParts[0] || "";
+    GameName = decodeURIComponent(pathParts[1] || "Unknown Game");
+  }
 
-    // 3. Load the Game into the local iframe
-    document.getElementById('gameFrame').src = finalGameUrl;
-    document.title = GameName;
-
-    // 4. SAVE TO LOCALSTORAGE (The Fix)
-    try {
-      let playedGames = JSON.parse(localStorage.getItem('playedGames') || '[]');
-
-      // Create the game object
-      const newGameEntry = { 
-        name: GameName, 
-        icon: GameIcon, 
-        url: finalGameUrl // Saving the ACTUAL game link, not the pathname
-      };
-
-      // Remove existing version of this game to avoid duplicates
-      playedGames = playedGames.filter(g => g.name !== GameName);
-
-      // Add to the front of the list (newest first)
-      playedGames.unshift(newGameEntry);
-
-      // Keep only the last 20 games to save space
-      if (playedGames.length > 20) {
-        playedGames = playedGames.slice(0, 20);
-      }
-
-      localStorage.setItem('playedGames', JSON.stringify(playedGames));
-    } catch (e) {
-      // If localStorage is blocked, the game still loads but won't save
-      console.error("Save failed:", e);
-    }
-  </script>
+  const GameIconPath = decodeURIComponent(pathParts.slice(2).join('/') || "");
+  
+  const finalGameUrl = "https://" + subdomain + ".vercel.app";
+</script>
 </body>
 </html>
