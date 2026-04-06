@@ -47,18 +47,13 @@
   games.forEach(game => {
     const card = document.createElement('div');
     card.className = 'game-card';
-
-    if (game.icon) {
-      const img = document.createElement('img');
-      img.src = game.icon;
-      img.alt = game.name;
-      card.appendChild(img);
-    }
-
+    const img = document.createElement('img');
+    img.src = game.icon || '';
+    img.alt = game.name || '';
+    card.appendChild(img);
     const name = document.createElement('div');
-    name.textContent = game.name;
+    name.textContent = game.name || '';
     card.appendChild(name);
-
     grid.appendChild(card);
   });
 
